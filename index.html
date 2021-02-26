@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="./css/all.css" rel="stylesheet" />
+    <link href="./css/bulma.css" rel="stylesheet" />
+    <link href="./css/style.css" rel="stylesheet" />
+    <script src="./js/all.js"></script>
+    <script src="./js/vue.js"></script>
+
+
+    <title>ToDo List App 2.0</title>
+</head>
+
+<body style="">
+
+    <section id="app">
+        <div class="container" style='padding-top: 2%;'>
+
+            <label for="" class="columns">
+                <span>
+                    <h1 class="title is-1 ml-2">My ToDo List</h1>
+                </span>
+                <!-- svg icon-->
+                <span style="margin-left: 40px; margin-top: 18px" @click="addListModal=true">
+                    <i class="fas addList fa-folder-plus "></i>
+                </span>
+            </label>
+
+            <!-- Add list modal -->
+            <div class='modal' :class="{'is-active': addListModal}">
+                <div class='modal-background' @click='addListModal=false'></div>
+                <div class='modal-card' style='max-width: 650px; width: 90%;'>
+
+                    <header class='modal-card-head'>
+                        <h4 class='title is-4'>New list</h4>
+                    </header>
+
+                    <section class='modal-card-body' style="padding-top: 45px; padding-bottom: 45px">
+                        <label for="" v-if="addListModal == true">
+                            <div class="column is-10" style=' padding-bottom: 0px;'>
+                                <div class="field">
+                                    <div class="control">
+                                        <!-- input -->
+                                        <input class="input" type="text" placeholder="Task Name" v-model="addListName"
+                                            :class="{'is-danger': addListNameInvalid }" />
+
+                                        <!-- invalid red -->
+                                        <p class='help is-white pl-1' :class="{'is-danger': addListNameInvalid}">
+                                            Input
+                                            Task
+                                            Name</p>
+
+                                    </div>
+
+                                    <!-- button-->
+                                    <button class='button is-danger' @click='addList()'>Save</button>
+
+                                </div>
+                            </div>
+                        </label>
+
+                    </section>
+
+                    <footer class='modal-card-foot'>
+
+
+                    </footer>
+                </div>
+            </div>
+            <!-- End Add list modal-->
+
+            <!-- edit list modal -->
+            <div class='modal' :class="{'is-active': editListModal}">
+                <div class='modal-background' @click='editListModal=false'></div>
+                <div class='modal-card' style='max-width: 650px; width: 90%;'>
+
+                    <header class='modal-card-head'>
+                        <h4 class='title is-4'>Edit list</h4>
+                    </header>
+
+                    <section class='modal-card-body' style="padding-top: 25px; padding-bottom: 25px">
+                        <label for="" v-if="editListModal == true">
+                            <div class="column is-10" style=' padding-bottom: 0px;'>
+                                <div class="field">
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Task Name" v-model="editListName"
+                                            :class="{'is-danger': editListNameInvalid }" />
+
+                                        <p class='help is-white pl-1 mt-0' :class="{'is-danger': editListNameInvalid}">
+                                            Input
+                                            List
+                                            Name</p>
+
+                                    </div>
+                                    <button class='button is-danger mt-1' @click='editListNameFn()'>Save</button>
+                                </div>
+                            </div>
+                        </label>
+
+                    </section>
+
+                    <footer class='modal-card-foot'>
+
+
+                    </footer>
+                </div>
+            </div>
+            <!-- End edit list modal-->
+
+            <!-- Remove list modal -->
+            <div class='modal' :class="{'is-active': removeListModal}">
+                <div class='modal-background' @click='removeListModal=false'></div>
+                <div class='modal-card' style='max-width: 650px; width: 90%;'>
+
+                    <header class='modal-card-head'>
+                        <h4 class='title is-4'>Remove Task</h4>
+                    </header>
+
+                    <section class='modal-card-body' style="padding-top: 45px; padding-bottom: 45px">
+                        <label for="" v-if="removeListModal == true">
+                            Are you sure you want to delete
+                            <label for=""
+                                class='title is-6 has-text-danger is-light'>{{todoLists[listIndexNow].name}}</label>
+                        </label>
+
+                    </section>
+
+                    <footer class='modal-card-foot'>
+                        <button class='button is-danger' @click='removeList(), removeListModal=false'>Confirm</button>
+                        <button class='button' @click='removeListModal=false'>Cancel</button>
+                    </footer>
+                </div>
+            </div>
+            <!-- End remove list modal-->
+
+            <p class=" subtitle my-2">Completed: {{completeTask}} </p>
+            <p class="subtitle my-2">Incomplete: {{inCompleteTask}} </p>
+            <p class="subtitle my-2">Flagged: {{ flaggedCount }} </p>
+
+            <!-- --------------------- carddddd ----------------------------->
+
+            <div class='columns' v-for="(list, listIndex) in todoLists">
+                <div class='column is-7 '>
+                    <div class="card mt-5" style="">
+                        <header class="card-header " style="background-color: #FF9AA2 ;">
+                            <div class="card-header-title">
+                                <label>{{ list.name}}</label>
+
+                                <!-- svg -->
+                                <!-- edit -->
+                                <span class="icon is-small ml-4"
+                                    @click="editListModal = true, listSelected = list.name, editListName = list.name">
+
+                                    <i class="fas iconHolder fa-edit"></i>
+                                </span>
+
+                                <!-- remove -->
+                                <span class="icon is-small ml-2"
+                                    @click='removeListModal=true, listSelected = list.name'>
+                                    <i class="fas iconHolder fa-trash-alt"></i>
+                                </span>
+                                <!-- end svg -->
+
+                            </div>
+
+                        </header>
+                        <div style=' overflow:scroll; overflow-x: hidden; max-height:309px; '>
+                            <div class="card-content">
+
+
+                                <div>
+                                    <!-- 1 of list-->
+                                    <div v-for="(item, index, name) in task" v-if="item.listId == list.id">
+                                        <div class="box level py-3 my-2 boxListHolder" v-if="item.hide == false">
+                                            <div class="control">
+
+                                                <!-- show name -->
+                                                <label class="checkbox textHolder" @click="hideFilter()">
+
+                                                    <input type="checkbox" :value='task[index].check'
+                                                        v-model="item.complete" />
+                                                    <span class='ml-1' style="font-weight: 600">{{item.name}}</span>
+
+
+
+                                                    <!-- show date -->
+                                                    <span for="" v-if="item.date != ''">
+                                                        (Due by {{ item.date }})
+                                                    </span>
+                                                </label>
+
+                                                <!-- show flag -->
+                                                <span v-if='item.flagCheck'
+                                                    :class="{'flagToBlack': item.flagColor == 'flagBlack', 'has-text-danger': item.flagColor == 'flagRed', 'has-text-success' : item.flagColor == 'flagGreen'}">
+                                                    <i class='fas iconHolder fa-flag ml-2 ' style="cursor:default"></i>
+                                                </span>
+
+                                            </div>
+
+                                            <div class="level-right">
+
+                                                <!-- edit and show medal -->
+                                                <span class="icon is-small" @click="editModal = true, modalIndex = index,  
+                                            taskNameModal = item.name, date = item.date, flagCheck = item.flagCheck,
+                                            flagColor = item.flagColor, listSelectedModal = todoLists[listIndex].name">
+
+                                                    <i class="fas iconHolder fa-edit"></i>
+                                                </span>
+
+                                                <span class="icon is-small ml-5"
+                                                    @click='removeModal=true, modalIndex=index'>
+                                                    <i class="fas iconHolder fa-trash-alt iconHolder"></i>
+                                                </span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- end 1 of list-->
+
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </div>
+
+
+
+
+                <div class="column is-6">
+                    <div class='column '>
+                        <!-- filter -->
+                        <div class="column is-7">
+                            <div class="card ">
+                                <header class="card-header  " style="background-color: #75E1EA">
+                                    <p class="card-header-title ">Filter</p>
+                                    <p class="card-header-icon">
+                                        <span class="card-header-icon icon">
+                                            <i class="fas iconHolder fa-filter"></i>
+                                        </span>
+                                    </p>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+                                        <div class="control">
+                                            <!-- hide complete -->
+                                            <label class="checkbox">
+                                                <input type="checkbox" v-model="list.complete" />
+                                                Hide completed tasks
+                                            </label>
+                                        </div>
+
+                                        <!-- show flag only -->
+                                        <div class="control">
+
+                                            <label class="checkbox">
+                                                <input type="checkbox" v-model="list.flagCheck" />
+                                                Show only flagged tasks
+                                            </label>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- end filter-->
+
+                        <!-- sort -->
+                        <div class="column is-7">
+                            <div class="card">
+                                <header class="card-header  " style="background-color: #75E1EA">
+                                    <p class="card-header-title">Sort</p>
+                                    <p class="card-header-icon">
+                                        <span class="card-header-icon icon">
+                                            <i class="fas iconHolder fa-filter"></i>
+                                        </span>
+                                    </p>
+                                </header>
+                                <div class="card-content">
+                                    <div class="content">
+                                        <!-- sort alphabet -->
+                                        <div class="control">
+                                            <label class="radio">
+                                                <input type="radio" v-model="list.radio" value="sortAlphabet" checked />
+                                                Sort alphabetically
+                                            </label>
+                                        </div>
+
+                                        <!-- sort incomplete -->
+                                        <div class="control">
+                                            <label class="radio">
+                                                <input type="radio" v-model="list.radio" value="sortIncomplete" />
+                                                Sort incomplete tasks
+                                            </label>
+                                        </div>
+
+                                        <!-- sort flag -->
+                                        <div class="control">
+                                            <label class="radio">
+                                                <input type="radio" v-model="list.radio" value="sortFlag" />
+                                                Sort flagged task first
+                                            </label>
+                                        </div>
+
+                                        <!-- sort date -->
+                                        <div class="control">
+                                            <label class="radio">
+                                                <input type="radio" v-model="list.radio" value="sortByDate" />
+                                                Sort by due date (ascending)
+                                            </label>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- end sort-->
+            </div>
+            <!-- end card -->
+
+            <!-- Edit modal -->
+            <div class='modal' :class="{'is-active': editModal}">
+
+
+                <div class='modal-background' @click="editTask(modalIndex, 'exit')">
+                </div>
+
+
+                <div class="modal-card" style="max-width: 525px;width: 90%;">
+
+                    <header class='modal-card-head'>
+                        <h4 class='title is-4'>Edit Task</h4>
+                    </header>
+
+                    <section class="modal-card-body ">
+                        <div class=" mt-4" style="max-width: 800px">
+                            <div>
+                                <div class="columns  pl-3 ">
+                                    <!-- text input / left side -->
+
+                                    <div class="column is-7" style=' padding-bottom: 0px;'>
+                                        <div class="field">
+                                            <div class="control  mb-2">
+
+                                                <input class="input" type="text" placeholder="Task Name"
+                                                    v-model="taskNameModal"
+                                                    :class="{'is-danger': taskNameModalInvalid}" />
+
+
+
+                                                <p class='help is-white pl-1'
+                                                    :class="{'is-danger': taskNameModalInvalid}">
+                                                    Input
+                                                    Task
+                                                    Name</p>
+
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- drop down -->
+                                    <div class="select mt-3 ml-5">
+                                        <select v-model="listSelectedModal">
+                                            <option value="selectList" style="display: none">---select list---</option>
+                                            <option v-for="selectList in todoLists">
+                                                {{ selectList.name }}</option>
+                                        </select>
+                                    </div>
+
+                                </div>
+
+                                <!-- end left side -->
+
+                                <!-- right side-->
+                                <div class="column is-12" style=" padding-top:0px;">
+
+                                    <p class="control">
+
+
+
+                                        <!-- date -->
+                                        <input type='date' class='button is-light' v-model="date">
+
+                                        <!-- flag check -->
+                                        <label class="button checkbox ml-3 mr-3" :class="{'is-success':flagCheck}">
+                                            <input type="checkbox" v-model="flagCheck" class="flagCheck">
+                                            Flag
+                                        </label>
+
+                                        <!-- flag color -->
+                                        <label for="" class=" mr-3">
+                                            <label class='radioColor ' style="background-color: #4A4A4A">
+                                                <input type="radio" class="checkColor" value='flagBlack' id="flagBlack"
+                                                    v-model="flagColor" name="colorPicker">
+
+                                                <label for="" class="svgRadio">
+                                                    <label for="flagBlack" v-if="flagColor == 'flagBlack'  ">
+                                                        <i class="fas iconHolder fa-check has-text-white"></i>
+                                                    </label>
+                                                </label>
+
+                                            </label>
+
+                                            <label class='radioColor ' style="background-color: #F14668;">
+                                                <input type="radio" class="checkColor" value='flagRed' id="flagRed"
+                                                    v-model="flagColor" name="colorPicker">
+
+                                                <label for="" class="svgRadio">
+                                                    <label for="flagRed" key="true" v-if="flagColor == 'flagRed'   ">
+                                                        <i class="fas iconHolder fa-check has-text-white  "></i>
+                                                    </label>
+                                                </label>
+
+                                            </label>
+
+                                            <label class='radioColor ' style="background-color: #48C78E;">
+                                                <input type="radio" class="checkColor" value='flagGreen' id="flagGreen"
+                                                    v-model="flagColor" name="colorPicker" checked>
+
+                                                <label for="" class="svgRadio">
+                                                    <label for="flagGreen" v-if="flagColor == 'flagGreen' ">
+                                                        <i class="fas iconHolder fa-check has-text-white  "></i>
+                                                    </label>
+                                                </label>
+                                            </label>
+                                        </label>
+                                        <!-- end flag color -->
+
+                                        <a class="button is-info is-2 " @click="editTask(modalIndex, 'edit')">
+                                            Save
+                                        </a>
+
+                                    </p>
+                                </div>
+                                <!-- end right side-->
+
+                            </div>
+                        </div>
+
+                    </section>
+                    <!-- end edit modal-->
+
+                    <footer class='modal-card-foot'>
+
+                    </footer>
+
+                </div>
+            </div>
+            <!-- End edit modal-->
+
+            <!-- Remove modal -->
+            <div class='modal' :class="{'is-active': removeModal}">
+                <div class='modal-background' @click='removeModal=false'></div>
+                <div class='modal-card' style='max-width: 650px; width: 90%;'>
+
+                    <header class='modal-card-head'>
+                        <h4 class='title is-4'>Remove Task</h4>
+                    </header>
+
+                    <section class='modal-card-body' style="padding-top: 45px; padding-bottom: 45px">
+                        <label for="" v-if="removeModal == true">
+                            Are you sure you want to delete
+                            <label for="" class='title is-6 has-text-danger is-light'>{{task[modalIndex].name}}</label>
+                        </label>
+
+                    </section>
+
+                    <footer class='modal-card-foot'>
+                        <button class='button is-danger'
+                            @click='removeTask(modalIndex, true), removeModal=false'>Confirm</button>
+                        <button class='button' @click='removeModal=false'>Cancel</button>
+                    </footer>
+                </div>
+            </div>
+            <!-- End remove modal-->
+
+            <!-- Add new task -->
+            <div class='column is-9 ' style="margin-bottom: 50px;">
+                <div class="card mt-5 pl-5 " style=" max-height: 95px;">
+                    <div class="card-content">
+                        <div class="columns is-3 pt-1 ">
+
+                            <!-- text input / left side -->
+                            <div class="column is-3">
+                                <div class="field">
+                                    <div class="control">
+                                        <input class="input" type="text" placeholder="Task Name" v-model="taskName"
+                                            :class="{'is-danger': taskNameInvalid}" />
+
+                                        <p class='help is-white pl-1 mt-0' :class="{'is-danger': taskNameInvalid}">
+                                            Input
+                                            Task
+                                            Name</p>
+
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- end left side -->
+
+                            <!-- right side-->
+                            <div class="column is-10">
+                                <p class="control">
+
+                                    <!-- drop down -->
+                                    <div class="select mr-3 " :class="{'is-danger': selectDropdownInvalid}">
+                                        <select v-model="listSelected" @click="selectedNone()">
+
+                                            <option style="display:none" value="selectList">---select
+                                                list---
+                                            </option>
+
+                                            <option class="dog" v-for="selectList in todoLists">
+                                                {{ selectList.name }}</option>
+
+                                        </select>
+                                    </div>
+
+
+                                    <!-- date-->
+                                    <input type='date' class='button is-light' v-model="date">
+
+                                    <label class="button checkbox ml-3 mr-3" :class="{'is-success':flagCheck}">
+                                        <input type="checkbox" v-model="flagCheck" class="flagCheck">
+                                        Flag
+                                    </label>
+
+                                    <!-- flag color -->
+                                    <label for="" class=" mr-3">
+                                        <!-- black flag -->
+                                        <label class='radioColor ' style="background-color: #4A4A4A">
+                                            <input type="radio" class="checkColor" value='flagBlack' id="flagBlack"
+                                                v-model="flagColor" name="colorPicker" checked>
+
+                                            <label for="" class="svgRadio">
+                                                <label for="flagBlack" v-if="flagColor == 'flagBlack'  ">
+                                                    <i class="fas iconHolder fa-check has-text-white"></i>
+                                                </label>
+                                            </label>
+
+                                        </label>
+
+                                        <!-- red flag -->
+                                        <label class='radioColor ' style="background-color: #F14668;">
+                                            <input type="radio" class="checkColor" value='flagRed' id="flagRed"
+                                                v-model="flagColor" name="colorPicker">
+
+                                            <label for="" class="svgRadio">
+                                                <label for="flagRed" key="true" v-if="flagColor == 'flagRed'   ">
+                                                    <i class="fas iconHolder fa-check has-text-white  "></i>
+                                                </label>
+                                            </label>
+
+                                        </label>
+
+                                        <!-- green flag -->
+                                        <label class='radioColor ' style="background-color: #48C78E;">
+                                            <input type="radio" class="checkColor" value='flagGreen' id="flagGreen"
+                                                v-model="flagColor" name="colorPicker">
+
+                                            <label for="" class="svgRadio">
+                                                <label for="flagGreen" v-if="flagColor == 'flagGreen' ">
+                                                    <i class="fas iconHolder fa-check has-text-white  "></i>
+                                                </label>
+                                            </label>
+                                        </label>
+                                    </label>
+                                    <!-- end flag color -->
+
+                                    <!-- save button -->
+                                    <a class="button is-info" @click="addTask()"> Save </a>
+
+                                </p>
+                            </div>
+                            <!-- end right side-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- End  add new task-->
+
+
+
+
+        </div>
+
+        </div>
+    </section>
+    <script src="./js/script.js"></script>
+
+</body>
+
+</html>
