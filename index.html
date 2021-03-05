@@ -49,7 +49,8 @@
                                             :class="{'is-danger': addListNameInvalid }" />
 
                                         <!-- invalid red -->
-                                        <p class='help is-white pl-1' :class="{'is-danger': addListNameInvalid}">
+                                        <p class='help is-white pl-1 mt-0 mb-2'
+                                            :class="{'is-danger': addListNameInvalid}">
                                             Input
                                             Task
                                             Name</p>
@@ -145,20 +146,20 @@
 
             <div class='columns' v-for="(list, listIndex) in todoLists">
                 <div class='column is-7 '>
-                    <div class="card mt-5" style="">
+                    <div class="card mt-5">
                         <header class="card-header " style="background-color: #FF9AA2 ;">
                             <div class="card-header-title">
                                 <label>{{ list.name}}</label>
 
                                 <!-- svg -->
-                                <!-- edit -->
+                                <!-- edit list button-->
                                 <span class="icon is-small ml-4"
                                     @click="editListModal = true, listSelected = list.name, editListName = list.name">
 
                                     <i class="fas iconHolder fa-edit"></i>
                                 </span>
 
-                                <!-- remove -->
+                                <!-- remove list button-->
                                 <span class="icon is-small ml-2"
                                     @click='removeListModal=true, listSelected = list.name'>
                                     <i class="fas iconHolder fa-trash-alt"></i>
@@ -168,22 +169,23 @@
                             </div>
 
                         </header>
-                        <div style=' overflow:scroll; overflow-x: hidden; max-height:309px; '>
+                        <div style=' overflow:scroll; overflow-x: hidden; max-height:330px; '>
                             <div class="card-content">
 
 
                                 <div>
                                     <!-- 1 of list-->
                                     <div v-for="(item, index, name) in task" v-if="item.listId == list.id">
-                                        <div class="box level py-3 my-2 boxListHolder" v-if="item.hide == false">
+                                        <div class="box level py-3 my-2 boxListHolder" v-if="!item.hide">
                                             <div class="control">
 
                                                 <!-- show name -->
-                                                <label class="checkbox textHolder" @click="hideFilter()">
+                                                <label class="checkbox textHolder">
 
                                                     <input type="checkbox" :value='task[index].check'
-                                                        v-model="item.complete" />
-                                                    <span class='ml-1' style="font-weight: 600">{{item.name}}</span>
+                                                        v-model="item.complete"
+                                                        @click="hideCompleteOnClick(list, item, index, listIndex)" />
+                                                    <span class='ml-1' style=" font-weight: 600">{{item.name}}</span>
 
 
 
@@ -206,7 +208,7 @@
                                                 <!-- edit and show medal -->
                                                 <span class="icon is-small" @click="editModal = true, modalIndex = index,  
                                             taskNameModal = item.name, date = item.date, flagCheck = item.flagCheck,
-                                            flagColor = item.flagColor, listSelectedModal = todoLists[listIndex].name">
+                                            flagColor = item.flagColor, listSelectedModal = list.name">
 
                                                     <i class="fas iconHolder fa-edit"></i>
                                                 </span>
@@ -248,7 +250,7 @@
                                         </span>
                                     </p>
                                 </header>
-                                <div class="card-content">
+                                <div class=" card-content">
                                     <div class="content">
                                         <div class="control">
                                             <!-- hide complete -->
@@ -284,7 +286,7 @@
                                         </span>
                                     </p>
                                 </header>
-                                <div class="card-content">
+                                <div class=" card-content">
                                     <div class="content">
                                         <!-- sort alphabet -->
                                         <div class="control">
@@ -332,7 +334,7 @@
             <div class='modal' :class="{'is-active': editModal}">
 
 
-                <div class='modal-background' @click="editTask(modalIndex, 'exit')">
+                <div class='modal-background' @click="editModal = !editModal">
                 </div>
 
 
@@ -372,7 +374,8 @@
                                     <!-- drop down -->
                                     <div class="select mt-3 ml-5">
                                         <select v-model="listSelectedModal">
-                                            <option value="selectList" style="display: none">---select list---</option>
+                                            <option value="selectList" style="display:none">---select list---
+                                            </option>
                                             <option v-for="selectList in todoLists">
                                                 {{ selectList.name }}</option>
                                         </select>
@@ -437,9 +440,14 @@
                                         </label>
                                         <!-- end flag color -->
 
-                                        <a class="button is-info is-2 " @click="editTask(modalIndex, 'edit')">
+                                        <a class="button is-info is-2 " @click="editTask(modalIndex)">
                                             Save
                                         </a>
+
+                                        <!-- select list danger-->
+                                        <p class='help is-white pl-1 mt-0'
+                                            :class="{'is-danger': selectDropdownInvalid}">
+                                            Select List</p>
 
                                     </p>
                                 </div>
@@ -478,7 +486,7 @@
 
                     <footer class='modal-card-foot'>
                         <button class='button is-danger'
-                            @click='removeTask(modalIndex, true), removeModal=false'>Confirm</button>
+                            @click='removeTask(modalIndex), removeModal=false'>Confirm</button>
                         <button class='button' @click='removeModal=false'>Cancel</button>
                     </footer>
                 </div>
@@ -503,6 +511,7 @@
                                             Task
                                             Name</p>
 
+
                                     </div>
                                 </div>
                             </div>
@@ -525,6 +534,8 @@
 
                                         </select>
                                     </div>
+
+
 
 
                                     <!-- date-->
@@ -579,6 +590,10 @@
 
                                     <!-- save button -->
                                     <a class="button is-info" @click="addTask()"> Save </a>
+
+                                    <!-- select list danger-->
+                                    <p class='help is-white pl-1 mt-0' :class="{'is-danger': selectDropdownInvalid}">
+                                        Select List</p>
 
                                 </p>
                             </div>
