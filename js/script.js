@@ -7,13 +7,13 @@ var app = new Vue({
 
         todoLists: [
             { id: 1, name: "ToDo List", radio: "sortAlphabet", complete: false, flagCheck: false },
-            { id: 2, name: "kuytest", radio: "sortAlphabet", complete: false, flagCheck: false }
+            { id: 2, name: "Not ToDo List", radio: "sortAlphabet", complete: false, flagCheck: false }
         ],
 
         task: [
             {
                 id: 1,
-                name: "8",
+                name: "Go shopping",
                 complete: true,
                 hide: false,
                 flagCheck: true,
@@ -23,17 +23,17 @@ var app = new Vue({
             },
             {
                 id: 2,
-                name: "4",
+                name: "Doing chores",
                 complete: false,
                 hide: false,
                 flagCheck: true,
-                date: "2021-06-02",
+                date: "",
                 flagColor: 'flagBlack',
                 listId: 1
             },
             {
                 id: 3,
-                name: "3",
+                name: "Doing homework",
                 complete: true,
                 hide: false,
                 flagCheck: true,
@@ -44,7 +44,7 @@ var app = new Vue({
 
             {
                 id: 4,
-                name: "2",
+                name: "Coding program",
                 complete: true,
                 hide: false,
                 flagCheck: false,
@@ -54,7 +54,7 @@ var app = new Vue({
             },
             {
                 id: 5,
-                name: "9",
+                name: "Work too hard",
                 complete: false,
                 hide: false,
                 flagCheck: true,
@@ -64,7 +64,7 @@ var app = new Vue({
             },
             {
                 id: 6,
-                name: "1",
+                name: "Play harder",
                 complete: false,
                 hide: false,
                 flagCheck: false,
@@ -72,9 +72,6 @@ var app = new Vue({
                 flagColor: 'flagGreen',
                 listId: 2
             }],
-
-
-
 
         taskName: '',
         editModal: false,
@@ -114,16 +111,14 @@ var app = new Vue({
         editListName: '',
         editListNameInvalid: false,
         invalidCaseEditList: false,
-        loltest: 'has-text-warning',
 
         removeListModal: false,
 
         selectDropdownInvalid: false,
         invalidCaseDropdown: false,
-        selectedNoneCase: false,
-        overing: false,
-        hideFilterOn: false,
-        anyChecking: 0
+        selectedNoneCase: false
+
+
 
     },
     methods: {
@@ -166,8 +161,8 @@ var app = new Vue({
             }
         },
 
-        editTask(index, editOrExit) {
-            if (editOrExit == 'edit' && this.taskNameModal.length > 0) {
+        editTask(index) {
+            if (this.taskNameModal.length > 0) {
                 this.task[index].name = this.taskNameModal;
                 this.task[index].flagCheck = this.flagCheck;
                 this.task[index].date = this.date;
@@ -186,12 +181,10 @@ var app = new Vue({
                 this.hideFilter();
 
             }
-            else if (editOrExit == 'edit') {
+            else {
                 this.invalidCaseModal = true;
             }
-            else if (editOrExit == 'exit') {
-                this.editModal = false;
-            }
+
 
         },
 
@@ -202,7 +195,6 @@ var app = new Vue({
         },
 
         sortCase() {
-
 
             this.sortListId();
 
@@ -258,6 +250,7 @@ var app = new Vue({
 
             function compare(a, b) {
                 if (a.listId == idNumber && a.listId == b.listId) {
+
                     if (a.complete < b.complete) return -1;
                     else if (a.complete > b.complete) return 1;
                     else return 0;
@@ -272,7 +265,7 @@ var app = new Vue({
             function compare(a, b) {
 
                 if (a.listId == idNumber && a.listId == b.listId) {
-                    console.log('res = ', a.name, b.name);
+                    //console.log('res = ', a.name, b.name);
 
                     if (a.flagCheck < b.flagCheck) return 1;
                     else if (a.flagCheck > b.flagCheck) return -1;
@@ -293,77 +286,13 @@ var app = new Vue({
                 }
             }
 
-
-
-            this.task.sort(compare2);
+            //this.task.sort(compare2);
             this.task.sort(compare);
 
             //this.sortColor();
         },
 
-        sortColor() {
-            this.todoLists.forEach((list, listIndex) => {
-                this.task.forEach((item, index) => {
-                    var frontIndex = 0;
-                    var temp = '';
-                    if (list.id == item.listId && item.flagCheck) {
-                        if (item.flagColor == 'flagGreen') {
-                            //console.log('index = ', index);
 
-                            //console.log('green = ', index, 'swap with ', this.task[frontIndex].flagColor);
-                            //console.log('before ', item[index].flagColor, 'to', item[frontIndex].flagColor);
-
-                            temp = item[frontIndex];
-                            item[frontIndex] = item[index];
-                            item[index] = temp;
-                            frontIndex++;
-                            //console.log('after ', item[index].flagColor, 'to', item[frontIndex].flagColor);
-
-
-                        }
-                    }
-
-                });
-            });
-
-        },
-
-
-        sorasdtColor() {
-            function compareBR(a, b) {
-
-
-                if (a.flagCheck && b.flagCheck) {
-
-
-                    if (this.changeColorToNumber(a.flagColor, 1) < this.changeColorToNumber(b.flagColor, 1) == 'flagRed') return 1;
-                    else if (this.changeColorToNumber(a.flagColor, 1) > this.changeColorToNumber(b.flagColor, 1)) return -1;
-                    else return 0;
-                }
-
-            };
-
-            function compareRG(a, b) {
-
-                if (a.flagCheck == b.flagCheck) {
-
-
-                    if (a.flagColor == 'flagRed' && b.flagColor == 'flagGreen') return 1;
-                    else if (a.flagColor == 'flagGreen' && b.flagCheck == 'flagRed') return -1;
-                    else if (a.flagColor == b.flagColor) return 0;
-                }
-            }
-            this.task.sort(compareBR);
-            //this.task.sort(compareRG);
-
-
-        },
-
-        changeColorToNumber(val, condi) {
-            if (val == 'flagBlack' && condi == 1) return '0';
-            else if (val == 'flagRed') return '1';
-            else if (val == 'flagGreen' && condi == 2) return '2';
-        },
 
         sortByDate(idNumber) {
 
@@ -375,8 +304,6 @@ var app = new Vue({
                     else if (a.date > b.date) return 1;
                     else return 0;
 
-
-
                 }
             }
 
@@ -384,9 +311,8 @@ var app = new Vue({
                 if (a.listId == idNumber && a.listId == b.listId) {
 
 
-                    if (b.date == '' || a.date == '') return -1;
-
-
+                    if (a.date == '') return 0;
+                    else if (b.date == '') return -1;
 
                 }
             }
@@ -397,18 +323,20 @@ var app = new Vue({
 
         hideFilter() {
 
+
             this.todoLists.forEach(list => {
                 this.task.forEach(item => {
 
                     if (item.listId == list.id) {
                         item.hide = false;
 
+                        //comp case
                         if (list.complete && item.complete && !list.flagCheck) {
-
 
                             item.hide = true
                         }
 
+                        //flagged only case
                         else if (!list.complete && !item.flagCheck && list.flagCheck) {
 
                             item.hide = true
@@ -429,24 +357,7 @@ var app = new Vue({
 
         },
 
-        hideUnflagFilter() {
 
-            // this.todoLists.forEach(list => {
-            //     this.task.forEach(item => {
-
-            //         if (list.flagCheck && !item.flagCheck && item.listId == list.id) {
-
-            //             item.hide = true;
-            //         }
-
-            //         else if (!list.flagCheck && item.listId == list.id) {
-
-            //             item.hide = false;
-
-            //         }
-            //     })
-            // })
-        },
 
         addList() {
             if (this.addListName.length > 0) {
@@ -469,6 +380,7 @@ var app = new Vue({
                 this.addListName = '';
 
             }
+
             else {
                 this.invalidCaseList = true;
             }
@@ -495,19 +407,13 @@ var app = new Vue({
 
         removeList() {
 
-            //console.log(this.task.length);
 
             for (var i = this.task.length - 1; i >= 0; i--) {
-                //console.log(i);
-
-                //console.log(this.task[i].listId, 'and', this.listSelectedId);
 
                 if (this.task[i].listId == this.listSelectedId) {
-                    //console.log(this.task[i].name);
 
                     this.task.splice(i, 1);
                 }
-
             }
 
             this.todoLists.splice(this.listIndexNow, 1);
@@ -526,32 +432,31 @@ var app = new Vue({
             }
         },
 
-        hideComp() {
-            this.todoLists.forEach((x, i) => {
 
-                if (this.task[i].complete && x.complete) x.hide = true;
+        hideCompleteOnClick(listV, taskV, taskIndex, listIndex) {
+
+            if (listV.complete) {
+                this.task[taskIndex].hide = !this.task[taskIndex].hide;
+                this.task[taskIndex].complete = !this.task[taskIndex].complete
+            }
+            else if (listV.radio == 'sortIncomplete') {
+                console.log('on');
 
 
-                else if (this.task[i].complete && x.complete) x.hide = false;
+                this.sortCase();
 
-            });
+            }
         }
+
     },
 
     watch: {
-
-
-
-
-
 
         dueDate(date) {
             var dateFormat = new Intl.DateTimeFormat('en-CA');
             return dateFormat.format(Date.parse(date))
 
         },
-
-
 
         taskName() {
             if (this.taskName.length < 1 && this.invalidCase) {
@@ -617,51 +522,25 @@ var app = new Vue({
             }
         },
 
-
-
-
-
-        showFlagTask(newV, oldV) {
-            this.task.forEach(x => {
-                if (newV && !x.flagCheck) {
-                    x.hide = true;
-                }
-
-                else if (oldV && !x.flagCheck) {
-                    x.hide = false;
-                }
-            });
-        },
-
         todoLists: {
             deep: true,
             handler() {
+
                 this.sortCase();
-
                 this.hideFilter();
-
-
 
             }
         },
 
-
-
-
-
-
         listSelected() {
 
-            // for (var i = 0; i < this.todoLists.length; i++) {
-            //     console.log(this.todoLists.length);
-
-            //     if (this.listSelected == this.todoLists[i].name) this.listSelectedId = this.todoLists[i].id;
-            // }
             this.todoLists.forEach((x, index) => {
 
                 if (this.listSelected == x.name) this.listSelectedId = x.id;
             })
+
         },
+
         listSelectedId() {
             this.todoLists.forEach((x, index) => {
                 if (x.id == this.listSelectedId) this.listIndexNow = index;
@@ -669,56 +548,20 @@ var app = new Vue({
         },
 
         listSelectedModal() {
-            // for (var i = 0; i < this.todoLists.length; i++) {
-            //     if (this.listSelected == this.todoLists[i].name) this.listSelectedId = x.id;
-            // }
 
             this.todoLists.forEach(x => {
                 if (this.listSelectedModal == x.name) this.listSelectedId = x.id;
             })
+
+        },
+
+        addListModal() {
+            if (!this.addListModal) {
+                this.invalidCaseList = false;
+                this.addListNameInvalid = false;
+                this.addListName = ''
+            }
         }
-        //this.sortCase();
-
-
-
-        /*
-        sortIncomplete() {
-     
-            var temp = false;
-            var index = 0;
-            var caseCondition = false;
-     
-     
-            if (this.backupCondition == false) this.taskBackup = this.task;
-     
-            if (this.sortIncomplete == true) {
-                for (var i = 0; i < this.task.length; i++) {
-                    for (var j = 0; j < this.task.length - i - 1; j++) {
-                        if (this.task[i].complete && caseCondition == false) {
-                            caseCondition = true;
-                            index = i;
-                        }
-                        else if (this.task[i].complete == false && caseCondition) {
-                            temp = this.task[index];
-                            this.task[index] = this.task[i];
-                            this.task[i] = temp;
-                            caseCondition = false;
-     
-                            this.backupCondition = true
-     
-                        }
-                    }
-                }
-            }
-            else {
-                this.task = this.taskBackup;
-                this.backupCondition = false;
-     
-            }
-            caseCondition = false;
-     
-        }*/
-
 
     },
 
